@@ -7,8 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Employee {
@@ -21,10 +21,12 @@ model Employee {
 
 model DoneWork {
   id        Int     @id @default(autoincrement())
-  department   String
+  department Department @relation(fields: [departmentId],references:[id]) 
+  departmentId   Int
   hours Int
   employee    Employee    @relation(fields: [employeeId], references: [id])
   employeeId  Int
+  month String
 }
 
 model Role {
@@ -35,10 +37,11 @@ model Role {
 
 model Department {
   id Int @id @default(autoincrement())
+  name String? @unique
   requiredHours Int 
-  month String
   rewards Int?
   child Department[] @relation("ParentAndChildDepartments")
   parent Department? @relation("ParentAndChildDepartments",fields: [parentId],references:[id])
   parentId Int?
+  doneWork DoneWork[]
 }

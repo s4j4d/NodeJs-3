@@ -20,33 +20,39 @@ async function main() {
     const department = await prisma.department.create({
       data: {
         requiredHours: Math.floor(Math.random() * 100),
-        month: 'December',
+        name:`Department-${i+1}`
       },
     })
     departments.push(department)
   }
 
   // Create employees
+  let roles;
   for (let i = 0; i < 10; i++) {
+    if(i==1){
+      roles = {
+        connect: [
+          {
+            id: superadminRole.id,
+          },
+        ],
+      }
+    }
     const employee = await prisma.employee.create({
       data: {
         email: `employee${i}@example.com`,
         name: `Employee ${i}`,
-        roles: {
-          connect: [
-            {
-              id: adminRole.id,
-            },
-            {
-              id: superadminRole.id,
-            },
-          ],
-        },
+        roles: roles,
         doneWork: {
           create: [
             {
-              department: departments[i % 10].id,
+              department: {
+                connect:{
+                  id:departments[i % 10].id
+                }
+              },
               hours: Math.floor(Math.random() * 100),
+              month:'December'
             },
           ],
         },
