@@ -29,20 +29,10 @@ async function main() {
   // Create employees
   let roles;
   for (let i = 0; i < 10; i++) {
-    if(i==1){
-      roles = {
-        connect: [
-          {
-            id: superadminRole.id,
-          },
-        ],
-      }
-    }
     const employee = await prisma.employee.create({
       data: {
         email: `employee${i}@example.com`,
         name: `Employee ${i}`,
-        roles: roles,
         doneWork: {
           create: [
             {
@@ -60,6 +50,34 @@ async function main() {
     })
     console.log(`Created new employee: ${employee.email} (ID: ${employee.id})`)
   }
+
+  const employee = await prisma.employee.create({
+    data: {
+      email: `employeeSuperAdmin@example.com`,
+      name: `Employee SuperAdmin`,
+      roles:{
+        connect:[
+          {
+            id: 1
+          }
+        ]
+      },
+      doneWork: {
+        create: [
+          {
+            department: {
+              connect:{
+                id:departments[Math.floor(Math.random() * 10)].id
+              }
+            },
+            hours: Math.floor(Math.random() * 100),
+            month:'December'
+          },
+        ],
+      },
+    },
+  })
+  console.log(`Created new employee: ${employee.email} (ID: ${employee.id})`)
 }
 
 main()
